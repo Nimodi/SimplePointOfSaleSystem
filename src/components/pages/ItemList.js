@@ -3,6 +3,7 @@ import { Table, Card, Button, ButtonToolbar } from "react-bootstrap";
 import { Header } from "./Header";
 import Axios from "axios";
 import { MDBIcon, MDBBtn } from "mdbreact";
+import { CustomInput } from "reactstrap";
 
 export class ItemList extends Component {
   constructor(props, context) {
@@ -19,11 +20,13 @@ export class ItemList extends Component {
       ordered_items: [],
       itemid: "",
       qty: "",
-      remain_items: []
+      remain_items: [],
+      add_items: [],
+      select_number: []
     };
   }
 
-  componentDidMount() {
+  componentDidMount(ItemId) {
     // const { orderid } = this.props.match.params;
     // console.log(orderid);
 
@@ -33,7 +36,7 @@ export class ItemList extends Component {
           this.setState({
             itemlist: res.data
           })
-        // console.log(res.data)
+        //console.log(res.data)
       )
       .catch(err => console.log(err));
 
@@ -56,6 +59,14 @@ export class ItemList extends Component {
         // console.log(res.data)
       )
       .catch(err => console.log(err));
+
+    //Delete request
+    Axios.delete(
+      `http://localhost:5000/orders/${this.state.orderid}/${ItemId}`
+    ).then(res => {
+      console.log(res);
+      console.log(res.data);
+    });
   }
 
   getItems() {
@@ -125,41 +136,55 @@ export class ItemList extends Component {
       }
     }
     console.log(ids);
-    // console.log(this.state.itemid);
-    // if (e.target.value === "Denim") {
-    //   this.setState({ itemid: 4 });
-    // } else if (e.target.value === "Frock") {
-    //   this.setState({ itemid: 2 });
-    // } else if (e.target.value === "Tshirt") {
-    //   this.setState({ itemid: 1 });
-    // } else if (e.target.value === "Shirt") {
-    //   this.setState({ itemid: 5 });
-    // } else if (e.target.value === "Throuser") {
-    //   this.setState({ itemid: 3 });
-    // } else {
-    //   this.setState({ itemid: 6 });
-    // }
-    // this.setState({ qty: 1 });
+
+    let currentComponent = this;
 
     Axios.post("http://localhost:5000/orders/" + id, {
       ItemId: ids,
       Qty: 1
     })
       .then(function(response) {
-        console.log(response);
+        console.log(response.data);
+        // currentComponent.state.ordered_items.push(response.data);
+        console.log("&&&&&&");
+        console.log(this.state.ordered_items);
       })
       .catch(function(error) {
         console.log(error);
       });
   }
 
-  Clicked(e) {
+  Clicked(e, ItemId) {
     console.log("+++++++++++");
+    console.log(this.state.orderid);
+    console.log(ItemId);
+    e.preventDefault();
+    this.componentDidMount(ItemId);
+  }
+  select(e) {
+    console.log(e.target.value);
   }
 
   render() {
     this.getItems();
-    // console.log(this.state.remain_items);
+    console.log(this.state.ordered_items);
+    var arr = [];
+    // for (var i = 0; i < this.state.ordered_items; i++) {
+    //   console.log("heeeeee");
+    //   console.log(this.state.ordered_items[i].Itemname);
+    //   for (var j = 0; j < this.state.additems.length; j++) {
+    //     if (this.state.ordered_items[i].Itemname !== this.state.additems[j]) {
+    //       console.log("heeeeee");
+    //       arr.push(this.state.additems[j].Itemname);
+    //     }
+    //   }
+    // }
+
+    for (var i = 1; i <= 100; i++) {
+      this.state.select_number[i] = i;
+    }
+    console.log(arr);
+
     return (
       <div>
         <Header />
@@ -178,10 +203,32 @@ export class ItemList extends Component {
               <tr>
                 {/* <td>{item._id}</td> */}
                 <td> {item.Itemname}</td>
-                <td>{item.Qty}</td>
+                <td>
+                  <CustomInput
+                    type="select"
+                    id="exampleCustomSelect"
+                    name="customSelect"
+                  >
+                    <option value="">{item.Qty}</option>
+                    {this.state.select_number.map(number => (
+                      <option value="">{number} </option>
+                    ))}
+                  </CustomInput>
+
+                  {/* {item.Qty}
+                  <Button color="primary" onClick={e => this.BtnClick2(e)}>
+                    change
+                  </Button> */}
+                </td>
                 <td>{item.unitprice}</td>
                 <td>{item.Qty * item.unitprice}</td>
-                <MDBBtn rounded outline color="info" onClick={this.Clicked()}>
+                ￼￼￼￼￼￼￼￼￼￼
+                <MDBBtn
+                  rounded
+                  outline
+                  color="info"
+                  onClick={e => this.Clicked(e, item._id)}
+                >
                   <MDBIcon icon="trash" className="cyan-text pr-3" />
                 </MDBBtn>
                 {/* <MDBBtn floating size="lg" gradient="purple">

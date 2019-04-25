@@ -8,6 +8,7 @@ import Modal from "./components/pages/Modal";
 import { Redirect } from "react-router-dom";
 import { ItemList } from "./components/pages/ItemList";
 import { Header } from "./components/pages/Header";
+import { NumberPicker } from "react-widgets";
 
 //import Axios from "axios";
 
