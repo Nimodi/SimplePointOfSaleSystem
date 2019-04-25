@@ -1,7 +1,14 @@
 import React, { Component } from "react";
 import { Table, Button } from "react-bootstrap";
 import Axios from "axios";
-import { Form, Modal } from "react-bootstrap";
+import { Form, Modal, Card } from "react-bootstrap";
+import { AddItem } from "./AddItem";
+import { Redirect } from "react-router-dom";
+import ItemList from "./ItemList";
+import { Header } from "./Header";
+import { Link } from "react-router-dom";
+import { withRouter } from "react-router";
+
 //import Modal from "./Modal";
 
 export class Orderlist extends Component {
@@ -10,23 +17,13 @@ export class Orderlist extends Component {
     this.handleShow = this.handleShow.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.state = {
-      itemlist: [
-        {
-          _id: "",
-          customerName: "",
-          createdDate: "",
-          items: [
-            {
-              ItemId: "",
-              Itemname: "",
-              Qty: "",
-              unitprice: ""
-            }
-          ]
-        }
-      ],
-
-      show: false
+      itemlist: [],
+      subtotal: 0,
+      items: [],
+      show: false,
+      orderid: "",
+      redirect: false,
+      student: "hello"
     };
   }
 
@@ -46,104 +43,88 @@ export class Orderlist extends Component {
     this.setState({ show: false });
   }
 
-  handleShow() {
-    this.setState({ show: true });
+  setRedirect = () => {
+    this.setState({
+      redirect: true
+    });
+  };
+  renderRedirect = () => {
+    if (this.state.redirect) {
+      console.log("********");
+      return <Redirect to={`/itemlist`} />;
+    }
+  };
+
+  total = 0;
+  handleShow(event, items, orderid) {
+    // this.setRedirect();
+    this.setState({ items: items });
+    this.setState({ orderid: orderid });
+
+    this.props.history.push("/itemlist/" + orderid);
   }
 
   // Add item to the order
-  /*
-  addItem(){
-    
-  
-    Axios.post('http://localhost:5000/orders/', {
-      title,
-      completed: false
-    })
-      .then(res => this.setState({ todos: [...this.state.todos, res.data] }));
+
+  addItem() {
+    // Axios.post("http://localhost:5000/orders/", {
+    //   item: [],
+    //   completed: false
+    // }).then(res =>
+    //   this.setState({ items: [...this.state.itemlist.items, res.data] })
+    // );
   }
-  */
 
   render() {
     const orders = this.state.itemlist;
 
-    console.log(orders);
+    this.new_itemlist = this.props.new_items;
+
     return (
-      //this.state.items.map(order => <h4>{order.Itemname}</h4>);
-
-      <Table responsive>
-        <thead>
-          <tr>
-            <th />
-
-            <th>Order ID</th>
-            <th>Customer Name</th>
-            <th>Created Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map(order => (
-            <tr>
-              <td>
-                <input
-                  type="checkbox"
-                  defaultChecked={this.state.complete}
-                  ref="complete"
-                  onClick={this.handleShow}
-                />
-
-                <Modal show={this.state.show} onHide={this.handleClose}>
-                  <Modal.Header closeButton>
-                    <Modal.Title style={{ textAlign: "center" }}>
-                      Order Details{" "}
-                    </Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <Table striped bordered hover>
-                      <thead>
-                        <tr>
-                          <th>Item Id</th>
-                          <th>Item Name</th>
-                          <th>Quantity</th>
-                          <th>Unit Price</th>
-                          <th>Total Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {order.items.map(item => (
-                          <tr>
-                            <td>{item.ItemId}</td>
-                            <td> {item.Itemname}</td>
-                            <td>{item.Qty}</td>
-                            <td>{item.unitprice}</td>
-                            <td>{item.Qty * item.unitprice}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                    <Button variant="secondary" onClick={this.addItem}>
-                      Add New Item
-                    </Button>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
-                      Close
-                    </Button>
-                    <Button variant="primary" onClick={this.handleClose}>
-                      Save Changes
-                    </Button>
-                  </Modal.Footer>
-                </Modal>
-              </td>
-
-              <td>{order._id}</td>
-              <td>{order.customerName}</td>
-              <td>{order.createdDate}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <div>
+        <div>
+          <Header />
+        </div>
+        <div>
+          <Card style={{ paddingleft: 5000 }}>
+            <Card.Body>
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th />
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Created Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map(order => (
+                    <tr>
+                      <td>
+                        {/* {this.renderRedirect()} */}
+                        {/* <Link to={`/itemlist`} /> */}
+                        <input
+                          type="checkbox"
+                          defaultChecked={this.state.complete}
+                          ref="complete"
+                          onClick={event =>
+                            this.handleShow(event, order.items, order._id)
+                          }
+                        />
+                      </td>
+                      <td>{order._id}</td>
+                      <td>{order.customerName}</td>
+                      <td>{order.createdDate}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </Card.Body>
+          </Card>
+        </div>
+      </div>
     );
   }
 }
 
-export default Orderlist;
+export default withRouter(Orderlist);
