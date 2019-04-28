@@ -1,15 +1,11 @@
 import React, { Component } from "react";
-import { Table, Button } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import Axios from "axios";
-import { Form, Modal, Card } from "react-bootstrap";
-import { AddItem } from "./AddItem";
+import { Card } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
-import ItemList from "./ItemList";
 import { Header } from "./Header";
-import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
-
-//import Modal from "./Modal";
+var logger = require("loglevel");
 
 export class Orderlist extends Component {
   constructor(props, context) {
@@ -29,14 +25,12 @@ export class Orderlist extends Component {
 
   componentDidMount() {
     Axios.get("http://localhost:5000/orders/")
-      .then(
-        res =>
-          this.setState({
-            itemlist: res.data
-          })
-        //console.log(res.data)
+      .then(res =>
+        this.setState({
+          itemlist: res.data
+        })
       )
-      .catch(err => console.log(err));
+      .catch(err => logger.error(err));
   }
 
   handleClose() {
@@ -50,29 +44,16 @@ export class Orderlist extends Component {
   };
   renderRedirect = () => {
     if (this.state.redirect) {
-      console.log("********");
       return <Redirect to={`/itemlist`} />;
     }
   };
 
   total = 0;
   handleShow(event, items, orderid) {
-    // this.setRedirect();
     this.setState({ items: items });
     this.setState({ orderid: orderid });
 
     this.props.history.push("/itemlist/" + orderid);
-  }
-
-  // Add item to the order
-
-  addItem() {
-    // Axios.post("http://localhost:5000/orders/", {
-    //   item: [],
-    //   completed: false
-    // }).then(res =>
-    //   this.setState({ items: [...this.state.itemlist.items, res.data] })
-    // );
   }
 
   render() {
@@ -101,8 +82,6 @@ export class Orderlist extends Component {
                   {orders.map(order => (
                     <tr>
                       <td>
-                        {/* {this.renderRedirect()} */}
-                        {/* <Link to={`/itemlist`} /> */}
                         <input
                           type="checkbox"
                           defaultChecked={this.state.complete}

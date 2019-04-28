@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Orderlist from "./Orderlist";
 import { Button, ButtonToolbar } from "react-bootstrap";
 import Axios from "axios";
+var logger = require("loglevel");
 
 export class AddItem extends Component {
   state = {
@@ -11,22 +12,16 @@ export class AddItem extends Component {
   onClick = e => {
     e.preventDefault();
 
-    console.log(this.props.orderid);
-
     const user = {
       name: this.state.name
     };
 
     Axios.post(`http://localhost:5000/orders/`, { user }).then(res => {
-      console.log(res);
-      console.log(res.data);
+      logger.debug(res.data);
     });
   };
 
   render() {
-    // console.log(this.state.student);
-    // console.log(this.state.new_items.length);
-    // console.log(this.state.new_items[0].ItemId);
     return (
       <div>
         <br />

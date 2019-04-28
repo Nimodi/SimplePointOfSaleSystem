@@ -3,17 +3,16 @@ import Form from "react-bootstrap/Form";
 import { Button, Card } from "react-bootstrap";
 import { Redirect } from "react-router-dom";
 import { BrowserRouter as Router, Route } from "react-router-dom";
-
-//import Bootstrap from "react-bootstrap";
 import Axios from "axios";
 import "./login.css";
 import Orderlist from "./Orderlist";
-//import { send } from "q";
+
+var logger = require("loglevel");
 
 export default class Login extends Component {
   constructor(props) {
     super(props);
-    //  this.routeChange = this.routeChange.bind(this);
+
     this.state = {
       name: "",
       password: "",
@@ -44,10 +43,10 @@ export default class Login extends Component {
 
     Axios.post(url, user)
       .then(function(response) {
-        console.log(response);
+        logger.debug(response);
       })
       .catch(function(error) {
-        console.log(error);
+        logger.error(error);
       });
 
     event.preventDefault();
@@ -63,14 +62,6 @@ export default class Login extends Component {
       return <Redirect to="./orderlist" />;
     }
   };
-
-  //login redirect to the orderlist page
-  // routeChange() {
-  //   {
-  //     let path = `/orderlist`;
-  //     this.props.history.push(path);
-  //   }
-  // }
 
   render() {
     return (
